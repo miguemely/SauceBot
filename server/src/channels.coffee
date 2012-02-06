@@ -32,7 +32,15 @@ class Channel
         try
             module = mod.instance moduleName
             module.load this
-            @modules.push module
+
+            priority = module.priority()
+            index = 0
+            index++ for md in @modules when priority >= md.priority()
+            
+            io.debug "Index of #{moduleName} = #{index}"
+            
+            @modules.splice index, 0, module
+            io.debug "[#{[md.priority() for md in @modules].join ','}]"
         catch error
             io.error "#{error}"
             sys.puts error.stack

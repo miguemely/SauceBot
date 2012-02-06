@@ -9,6 +9,7 @@ io    = require '../ioutil'
 exports.name        = 'Base'
 exports.version     = '1.1'
 exports.description = 'Global base commands such as !time and !saucebot'
+exports.priority    = 100
 
 io.module '[Base] Init'
 

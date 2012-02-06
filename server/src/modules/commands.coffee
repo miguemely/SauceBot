@@ -9,6 +9,7 @@ io    = require '../ioutil'
 exports.name        = 'Commands'
 exports.version     = '1.1'
 exports.description = 'Custom commands handler'
+exports.priority    = 800
 
 io.module '[Commands] Init'
 

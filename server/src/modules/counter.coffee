@@ -9,6 +9,7 @@ io    = require '../ioutil'
 exports.name        = 'Counter'
 exports.version     = '1.2'
 exports.description = 'Provides counters that can be set like commands.'
+exports.priority    = 700
 
 io.module '[Counter] Init'
 
