@@ -9,7 +9,7 @@ io    = require '../ioutil'
 exports.name        = 'Commands'
 exports.version     = '1.1'
 exports.description = 'Custom commands handler'
-exports.priority    = 800
+exports.priority    = 700
 
 io.module '[Commands] Init'
 
@@ -45,10 +45,12 @@ class Commands
                 [[command, message]]
 
     handle: (user, command, args, sendMessage) ->
-        {op} = user
-        res  = undefined
+        handling = command in ['set', 'unset']
+        resSent  = null
+        {op}     = user
+        res      = undefined
         
-        if (op? and (command in ['set', 'unset']))
+        if (op? and handling)
             
             # !(un)?set <command> - Unset command
             if (args.length is 1)
@@ -68,7 +70,10 @@ class Commands
         else
             res = @commands[command]
 
-        sendMessage res if res?
+        sendMessage (resSent = res) if res?
+
+        handling or resSent?
+
 
 exports.New = (channel) ->
     new Commands channel

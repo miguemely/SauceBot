@@ -38,6 +38,6 @@ exports.instance = (name) ->
     if (!module.New?)
         throw new Error "Invalid module '#{name}'"
         
-    inst = module.New()
-    inst.priority = -> module.priority ? 500
-    inst
+    modinstance = module.New()
+    modinstance.priority = -> module.priority ? 500
+    modinstance

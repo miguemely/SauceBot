@@ -36,11 +36,17 @@ class Base
         @channel = chan if chan?
         
     handle: (user, command, args, sendMessage) ->
+        handling = command in @handlers
+        resSent  = null
         handler = @handlers[command]
         
         if (handler?)
-            result = handler(user, args)
-            sendMessage result if result?
+            res = handler(user, args)
+
+        sendMessage (resSent = res) if res?
+
+        handling or resSent?
+
 
 exports.New = (channel) ->
     new Base channel

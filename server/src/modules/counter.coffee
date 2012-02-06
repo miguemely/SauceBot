@@ -9,7 +9,7 @@ io    = require '../ioutil'
 exports.name        = 'Counter'
 exports.version     = '1.2'
 exports.description = 'Provides counters that can be set like commands.'
-exports.priority    = 700
+exports.priority    = 800
 
 io.module '[Counter] Init'
 
@@ -34,7 +34,7 @@ class Counter
                value: 'value',
                (counters) =>
                   @counters = counters
-                  io.module "[Counters] Counters loaded"
+                  io.module "[Counter] Counters loaded"
 
     counterSave: (ctr) ->
        db.addChanData @channel.id, 'counter',
@@ -44,7 +44,7 @@ class Counter
     # Handle !<counter>
     counterCheck: (ctr) ->
         if @counters[ctr]?
-            return "#{ctr} = #{@counters[ctr]}"
+            return "[Counter] #{ctr} = #{@counters[ctr]}"
 
     # Handle !<counter> =<value>
     counterSet: (ctr, value) ->
@@ -53,7 +53,7 @@ class Counter
                 @counters[ctr] = value
 
                 @counterSave ctr
-                return "#{ctr} created and set to #{value}."
+                return "[Counter] #{ctr} created and set to #{value}."
 
             @counters[ctr] = value
 
@@ -64,7 +64,7 @@ class Counter
     # Handle !<counter> -<value>
     counterAdd: (ctr, value) ->
         if !@counters[ctr]?
-            return "Invalid counter '#{ctr}'. Create it with '!#{ctr} =0'"
+            return "[Counter] Invalid counter '#{ctr}'. Create it with '!#{ctr} =0'"
 
         @counters[ctr] += value
 
@@ -75,20 +75,23 @@ class Counter
     counterUnset: (ctr) ->
         if @counters[ctr]?
             db.removeChanData @channel.id, 'counter', '', command
-            return "#{ctr} removed."
+            return "[Counter] #{ctr} removed."
         
     handle: (user, command, args, sendMessage) ->
+        handling = false
+        resSent  = null
+
         arg = args[0] ? null
 
-        if (arg[0]? and arg[0] isnt '')
+        if (arg? and arg isnt '')
 
-            op    = arg.charAt(0)
-            vals  = arg.slice(1)
-            value = if (vals isnt '') then parseInt arg.slice(1), 10 else null
+            symbol = arg.charAt(0)
+            vals   = arg.slice(1)
+            value  = if (vals isnt '') then parseInt vals, 10 else null
 
             if value isnt NaN
 
-                res = switch op.charAt(0)
+                res = switch symbol
                   when '='
                     @counterSet command, value
                   when '+'
@@ -101,7 +104,10 @@ class Counter
         else
             res = @counterCheck command
 
-        sendMessage "[Counter] #{res}" if res?
+        sendMessage (resSent = res) if res?
+
+        handling or resSent?
+
 
 exports.New = (channel) ->
     new Counter channel

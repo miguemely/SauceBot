@@ -73,7 +73,7 @@ class Channel
         arguments = data.args
         
         for module in @modules
-            module.handle user, command, arguments, sendMessage
+            break if module.handle user, command, arguments, sendMessage
         
         finished() if finished?
         

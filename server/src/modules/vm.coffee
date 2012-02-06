@@ -74,9 +74,11 @@ class VM
         "Added #{blocks[idx]}."
     
     handle: (user, command, args, sendMessage) ->
+        handling = command is 'vm'
+        resSent  = null
         {name, op} = user
         
-        return unless (op? and command is 'vm')
+        return unless op? and handling
         
         # !vm - Print victory monument
         if (!args? or args[0] is '')
@@ -90,7 +92,10 @@ class VM
         else
             res = @setVM(args)
         
-        sendMessage "[VM] #{res}" if res?
+        sendMessage (resSent = res) if res?
+
+        handling or resSent?
+
 
 exports.New = (channel) ->
     new VM channel

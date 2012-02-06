@@ -193,21 +193,26 @@ class Filters
             res = @handleFilterCommand command, filter, arg, value
                     
         
+
     handle: (user, command, args, sendMessage) ->
+        handling = command in tableNames or command in ['permit','filter']
+        resSent  = null
         {name, op} = user
         
         # Op - check for filter commands.
         if (op?)
-            return unless command? and command isnt ''
+            return unless handling
 
             res = @handleCommand command, args
             
         
-        # Not op - filter their message instead. :>    
+        # Not op - filter their message instead. :>
         else
             res = @checkFilters(name, [command].concat(args))
         
-        sendMessage res if res?
+        sendMessage (resSent = res) if res?
+
+        handling or resSent?
 
 
 exports.New = (channel) ->

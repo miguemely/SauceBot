@@ -88,15 +88,16 @@ class News
         @getNext()
     
     handle: (user, command, args, sendMessage) ->
-        {name, op} = user
-        
+        handling = command is 'news'
+        resSent  = null
         newsSent = null
+        {name, op} = user
         
         # Check if it's time to print some news
         if ((news = @tickNews())?)
             sendMessage (newsSent = news)
 
-        return unless op? and command is 'news'
+        return unless op? and handling
         
         # Get and splice the command argument 
         arg = args[0]
@@ -151,9 +152,11 @@ class News
                     updated = null
                     
             
-            @save() if updated?    
+            @save() if updated?
            
-        sendMessage res if res?
+        sendMessage (resSent = res) if res?
+
+        handling or resSent?
 
 
 exports.New = (channel) ->
